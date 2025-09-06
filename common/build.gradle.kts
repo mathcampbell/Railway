@@ -31,27 +31,31 @@ architectury {
 }
 
 dependencies {
-    // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
-    // Do NOT use other classes from fabric loader
-    modImplementation("net.fabricmc:fabric-loader:${"fabric_loader_version"()}")
-    // Compile against Create Fabric in common
-    // beware of differences across platforms!
-    // dependencies must also be pulled in to minimize problems, from remapping issues to compile errors.
-    // All dependencies except Flywheel and Registrate are NOT safe to use!
-    // Flywheel and Registrate must also be used carefully due to differences.
-    modCompileOnly("com.simibubi.create:create-fabric-${"minecraft_version"()}:${"create_fabric_version"()}")
+    // Keep Fabric loader for @Environment annotations used in common
+    compileOnly("net.fabricmc:fabric-loader:${property("fabric_loader_version")}")
 
-    // required for proper remapping and compiling
-    modCompileOnly("net.fabricmc.fabric-api:fabric-api:${"fabric_api_version"()}")
+    // --- Create v6 on 1.21.1: compile-only APIs for common code ---
+    // Create (slim) – v6 on 1.21.1
+    compileOnly("com.simibubi.create:create-${property("minecraft_version")}:${property("create_forge_version")}:slim") {
+        isTransitive = false
+    }
 
-    // JourneyMap compat
-    modCompileOnly("info.journeymap:journeymap-api:${"journeymap_api_version"()}-fabric-SNAPSHOT")
+    // Flywheel API (NeoForge) – gives you the API types used from flywheel in common
+    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${property("minecraft_version")}:${property("flywheel_version")}")
 
-    modCompileOnly("de.maxhenkel.voicechat:voicechat-api:${"voicechat_api_version"()}")
-    modCompileOnly("maven.modrinth:simple-voice-chat:fabric-${"voicechat_version"()}")
+    // Catnip (Common) – provides net.createmod.catnip.* classes used across your common sources
+    compileOnly("net.createmod.catnip:Catnip-Common-${property("minecraft_version")}:${property("catnip_version")}")
 
-    annotationProcessor(implementation("io.github.llamalad7:mixinextras-common:${"mixin_extras_version"()}")!!)
+    // Ponder (NeoForge) – provides net.createmod.ponder.* API used by common
+    compileOnly("net.createmod.ponder:Ponder-NeoForge-${property("minecraft_version")}:${property("ponder_version")}")
+
+    // javax annotations used in sources (@ParametersAreNonnullByDefault, @Nullable)
+    compileOnly("javax.annotation:javax.annotation-api:1.3.2")
+
+    // (Optional) if you reference JetBrains annotations anywhere
+    // compileOnly("org.jetbrains:annotations:24.1.0")
 }
+
 
 tasks.processResources {
     // must be part of primary mod to be findable
