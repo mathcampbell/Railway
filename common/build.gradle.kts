@@ -51,6 +51,23 @@ dependencies {
     modCompileOnly("maven.modrinth:simple-voice-chat:fabric-${"voicechat_version"()}")
 
     annotationProcessor(implementation("io.github.llamalad7:mixinextras-common:${"mixin_extras_version"()}")!!)
+
+  // Annotations used in common
+    compileOnly("javax.annotation:javax.annotation-api:1.3.2")
+
+    // Create v6 – use the slim jar for compileOnly in common
+    compileOnly("com.simibubi.create:create-${property("minecraft_version")}:${property("create_version")}:slim") {
+        isTransitive = false
+    }
+
+    // Flywheel API (NeoForge) – just interfaces/classes common touches
+    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${property("minecraft_version")}:${property("flywheel_version")}")
+
+    // Catnip Common – provides net.createmod.catnip.* used across common
+    compileOnly("net.createmod.catnip:Catnip-Common-${property("minecraft_version")}:${property("catnip_common_version")}")
+
+    // Ponder API (NeoForge) – the API that Create exposes for tutorials, etc.
+    compileOnly("net.createmod.ponder:Ponder-NeoForge-${property("minecraft_version")}:${property("ponder_version")}")
 }
 
 tasks.processResources {
